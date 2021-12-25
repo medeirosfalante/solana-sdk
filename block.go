@@ -3,7 +3,6 @@ package solanasdk
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 )
 
 type Meta struct {
@@ -72,6 +71,7 @@ type TransactionBind struct {
 	Address  string  `json:"address"`
 	Currency string  `json:"currency"`
 	Mint     string  `json:"mint"`
+	Native   bool    `json:"native"`
 }
 
 type BlockQuery struct {
@@ -112,12 +112,11 @@ func (t *Client) GetConfirmedBlockFindDeposit(ctx context.Context, number int32,
 		if len(item.Transaction.Message.AccountKeys) > 2 {
 			for _, itemRef := range address {
 				if item.Transaction.Message.AccountKeys[1] == itemRef {
-					fmt.Printf("address \n%s\n", item.Transaction.Message.AccountKeys[1])
 					amountIntPre := item.Meta.PreBalances[1]
 					amountIntPos := item.Meta.PostBalances[1]
 					totalAmountInt := amountIntPos - amountIntPre
 					totalAmountFloat := float64(totalAmountInt / 1000000000)
-					transactions = append(transactions, &TransactionBind{Address: itemRef, Amount: totalAmountFloat, Currency: "SOL"})
+					transactions = append(transactions, &TransactionBind{Address: itemRef, Amount: totalAmountFloat, Currency: "SOL", Native: true})
 				}
 			}
 		}
@@ -126,7 +125,7 @@ func (t *Client) GetConfirmedBlockFindDeposit(ctx context.Context, number int32,
 				for _, itemRef := range address {
 					if item.Owner == itemRef {
 						item.Owner = itemRef
-						txRef := &TransactionBind{Address: itemRef, Amount: item.UiTokenAmount.UiAmount, Mint: item.Mint}
+						txRef := &TransactionBind{Address: itemRef, Amount: item.UiTokenAmount.UiAmount, Mint: item.Mint, Native: false}
 						transactions = append(transactions, txRef)
 					}
 
