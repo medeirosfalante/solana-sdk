@@ -118,7 +118,7 @@ func (t *Client) GetConfirmedBlockFindDeposit(ctx context.Context, number int32,
 					amountIntPos := item.Meta.PostBalances[1]
 					totalAmountInt := amountIntPos - amountIntPre
 					totalAmountFloat := float64(totalAmountInt / 1000000000)
-					txRef := &TransactionBind{Address: itemRef, Amount: totalAmountFloat, Currency: "SOL", Native: true, Txid: item.Transaction.Message.Header.Signatures[0]}
+					txRef := &TransactionBind{Address: itemRef, Amount: totalAmountFloat, Currency: "SOL", Native: true, Txid: item.Transaction.Signatures[0]}
 					transactions = append(transactions, txRef)
 				}
 			}
@@ -128,7 +128,7 @@ func (t *Client) GetConfirmedBlockFindDeposit(ctx context.Context, number int32,
 				for _, itemRef := range address {
 					if itemBalance.Owner == itemRef {
 						itemBalance.Owner = itemRef
-						txRef := &TransactionBind{Address: itemRef, Amount: itemBalance.UiTokenAmount.UiAmount, Mint: itemBalance.Mint, Native: false, Txid: item.Transaction.Message.Header.Signatures[0]}
+						txRef := &TransactionBind{Address: itemRef, Amount: itemBalance.UiTokenAmount.UiAmount, Mint: itemBalance.Mint, Native: false, Txid: item.Transaction.Signatures[0]}
 						transactions = append(transactions, txRef)
 					}
 
