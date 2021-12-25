@@ -13,6 +13,7 @@ type RpcClient struct {
 
 func NewRpc(url string) *RpcClient {
 	Client := jsonrpc.NewClient(url)
+
 	return &RpcClient{Client}
 }
 
