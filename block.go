@@ -74,9 +74,19 @@ type TransactionBind struct {
 	Mint     string  `json:"mint"`
 }
 
-func (t *Client) GetConfirmedBlock(ctx context.Context, number int32) (*Block, error) {
+type BlockQuery struct {
+	Encoding           string `json:"encoding"`
+	TransactionDetails string `json:"transactionDetails"`
+	Rewards            bool   `json:"rewards"`
+}
+
+func (t *Client) GetBlock(ctx context.Context, number int32) (*Block, error) {
 	var blockRef Block
-	response, err := t.client.CallComand(ctx, "getConfirmedBlock", number, "json")
+	response, err := t.client.CallComand(ctx, "getBlock", number, &BlockQuery{
+		Encoding:           "json",
+		TransactionDetails: "full",
+		Rewards:            false,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +104,7 @@ func (t *Client) GetConfirmedBlock(ctx context.Context, number int32) (*Block, e
 
 func (t *Client) GetConfirmedBlockFindDeposit(ctx context.Context, number int32, address []string) ([]*TransactionBind, error) {
 	var transactions []*TransactionBind
-	block, err := t.GetConfirmedBlock(context.TODO(), number)
+	block, err := t.GetBlock(context.TODO(), number)
 	if err != nil {
 		return nil, err
 	}
