@@ -29,7 +29,8 @@ type PostTokenBalancesItemUiTokenAmount struct {
 }
 
 type TransactionItem struct {
-	Message TransactionItemMessage `json:"message"`
+	Message    TransactionItemMessage `json:"message"`
+	Signatures []string               `json:"signatures"`
 }
 
 type TransactionItemMessage struct {
