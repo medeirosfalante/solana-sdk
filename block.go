@@ -72,6 +72,7 @@ type TransactionBind struct {
 	Currency string  `json:"currency"`
 	Mint     string  `json:"mint"`
 	Native   bool    `json:"native"`
+	Txid     string  `json:"txid"`
 }
 
 type BlockQuery struct {
@@ -116,16 +117,17 @@ func (t *Client) GetConfirmedBlockFindDeposit(ctx context.Context, number int32,
 					amountIntPos := item.Meta.PostBalances[1]
 					totalAmountInt := amountIntPos - amountIntPre
 					totalAmountFloat := float64(totalAmountInt / 1000000000)
-					transactions = append(transactions, &TransactionBind{Address: itemRef, Amount: totalAmountFloat, Currency: "SOL", Native: true})
+					txRef := &TransactionBind{Address: itemRef, Amount: totalAmountFloat, Currency: "SOL", Native: true, Txid: item.Transaction.Message.Header.Signatures[0]}
+					transactions = append(transactions, txRef)
 				}
 			}
 		}
 		if len(item.Meta.PostTokenBalances) > 0 {
-			for _, item := range item.Meta.PostTokenBalances {
+			for _, itemBalance := range item.Meta.PostTokenBalances {
 				for _, itemRef := range address {
-					if item.Owner == itemRef {
-						item.Owner = itemRef
-						txRef := &TransactionBind{Address: itemRef, Amount: item.UiTokenAmount.UiAmount, Mint: item.Mint, Native: false}
+					if itemBalance.Owner == itemRef {
+						itemBalance.Owner = itemRef
+						txRef := &TransactionBind{Address: itemRef, Amount: itemBalance.UiTokenAmount.UiAmount, Mint: itemBalance.Mint, Native: false, Txid: item.Transaction.Message.Header.Signatures[0]}
 						transactions = append(transactions, txRef)
 					}
 
